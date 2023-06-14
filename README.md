@@ -4,7 +4,7 @@ and approaches to help them unlock the full potential of their data. One such ap
 a pattern that combines features of both data warehouses and data lakes to create a unified data platform.
 
 
-![Architecture](/Images/DemoArchitecture/png "Architecture")
+![Architecture](/Images/DemoArchitecture.png "Architecture")
 
 
 ## Set up
@@ -56,5 +56,5 @@ docker exec -it master spark-submit --jars /opt/spark/jars/aws-java-sdk-bundle-1
 
 6. Connect to Metabase to using BI
 
-![Connec to Metabase](/Images/DemoArchitecture/png "Connect to Metabase")
+![Connec to Metabase](/Images/DemoArchitecture.png "Connect to Metabase")
 
