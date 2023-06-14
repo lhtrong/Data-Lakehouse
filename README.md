@@ -56,5 +56,5 @@ docker exec -it master spark-submit --jars /opt/spark/jars/aws-java-sdk-bundle-1
 
 6. Connect to Metabase to using BI
 
-![Connec to Metabase](/Images/DemoArchitecture.png "Connect to Metabase")
+![Connec to Metabase](/Images/connect_metabase.png "Connect to Metabase")
 
