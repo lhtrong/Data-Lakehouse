@@ -1,1 +1,82 @@
-/opt/spark/jars/antlr4-4.7.2.jar:/opt/spark/jars/antlr4-runtime-4.7.jar:/opt/spark/jars/antlr-runtime-3.5.2.jar:/opt/spark/jars/ST4-4.0.8.jar:/opt/spark/jars/org.abego.treelayout.core-1.0.3.jar:/opt/spark/jars/javax.json-1.0.4.jar:/opt/spark/jars/icu4j-58.2.jar
+- **Spark master UI:**    http://localhost:9090
+- **Spark worker a UI:**  http://localhost:9091
+- **Spark worker b UI:**  http://localhost:9092
+- **Minio:**  http://localhost:9001
+- **Presto:** http://localhost:8000
+- **Metabase.** http://localhost:3000
+
+
+presto --server localhost:8080 --catalog hive --schema default
+
+
+CREATE TABLE IF NOT EXISTS Part_Maker (
+  part_maker_id INT ,
+  name VARCHAR(50)
+) WITH (
+  external_location = 's3a://datalake/bronze/CarPartsDB/Jun-06-2023/Part_Maker',
+  format = 'parquet'
+);
+
+CREATE TABLE IF NOT EXISTS Part (
+  part_id INT ,
+  brand_id INT,
+  supplier_id INT,
+  part_group_id INT, 
+  part_maker_id INT,
+  part_name VARCHAR(50),
+  main_supplier_name VARCHAR(50),
+  price_to_us INT,
+  price_to_customer INT
+) WITH (
+  external_location = 's3a://datalake/bronze/CarPartsDB/Jun-06-2023/Part',
+  format = 'parquet'
+);
+
+CREATE TABLE IF NOT EXISTS Part_for_Car (
+  car_id INT,
+  part_id INT
+) WITH (
+  external_location = 's3a://datalake/bronze/CarPartsDB/Jun-06-2023/Part_for_Car',
+  format = 'parquet'
+);
+
+CREATE TABLE IF NOT EXISTS Part_Supplier (
+  part_supplier_id INT ,
+  part_id INT,
+  supplier_id INT
+) WITH (
+  external_location = 's3a://datalake/bronze/CarPartsDB/Jun-06-2023/Part_Supplier',
+  format = 'parquet'
+);
+
+CREATE TABLE IF NOT EXISTS Part_in_Order (
+  part_in_order_id INT,
+  order_id INT,
+  part_supplier_id INT,
+  actual_sale_price INT,
+  quantity INT
+) WITH (
+  external_location = 's3a://datalake/bronze/CarPartsDB/Jun-06-2023/Part_in_Order',
+  format = 'parquet'
+);
+
+jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+
+export PYTHONPATH="${SPARK_HOME}/python/:$PYTHONPATH"
+export PYTHONPATH="${SPARK_HOME}/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH"
+
+
+
+docker exec -it master spark-submit --jars /opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar,/opt/spark/jars/hadoop-aws-3.2.0.jar,/opt/spark/jars/postgresql-42.3.5.jar \
+        --master spark://master:7077 \
+        --deploy-mode client \
+        --executor-memory 1G \
+        --executor-cores 1 \
+        --packages io.delta:delta-core_2.12:1.0.1 \
+        --conf "spark.executor.extraClassPath=/opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar:/opt/spark/jars/hadoop-aws-3.2.0.jar:/opt/spark/jars/postgresql-42.3.5.jar" \
+        --conf "spark.driver.extraClassPath=/opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar:/opt/spark/jars/hadoop-aws-3.2.0.jar:/opt/spark/jars/postgresql-42.3.5.jar" \
+        /opt/workspace/postgres_to_s3.py
+
+
+
+

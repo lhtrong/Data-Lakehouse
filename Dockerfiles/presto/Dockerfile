@@ -9,7 +9,9 @@ ARG PRESTO_BIN=https://repo1.maven.org/maven2/com/facebook/presto/presto-server/
 # Update the base image OS and install wget and python
 RUN apt-get update && \
     apt-get install -y wget python && \
-    apt-get install -y less
+    apt-get install -y less &&\
+    apt-get install vim 
+
 
 # Download Presto and unpack it to /opt/presto
 RUN wget --quiet ${PRESTO_BIN}
